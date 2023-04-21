@@ -3418,21 +3418,25 @@ extension ReceiveMessageOutputResponseBody: Swift.Decodable {
 
     public init (from decoder: Swift.Decoder) throws {
         let topLevelContainer = try decoder.container(keyedBy: ClientRuntime.Key.self)
-        let containerValues = try topLevelContainer.nestedContainer(keyedBy: CodingKeys.self, forKey: ClientRuntime.Key("ReceiveMessageResult"))
-        if containerValues.contains(.messages) {
-            let messagesWrappedContainer = containerValues.nestedContainerNonThrowable(keyedBy: CodingKeys.self, forKey: .messages)
-            if messagesWrappedContainer != nil {
-                let messagesContainer = try containerValues.decodeIfPresent([SQSClientTypes.Message].self, forKey: .messages)
-                var messagesBuffer:[SQSClientTypes.Message]? = nil
-                if let messagesContainer = messagesContainer {
-                    messagesBuffer = [SQSClientTypes.Message]()
-                    for structureContainer0 in messagesContainer {
-                        messagesBuffer?.append(structureContainer0)
+        let containerValues = try topLevelContainer.nestedContainerNonThrowable(keyedBy: CodingKeys.self, forKey: ClientRuntime.Key("ReceiveMessageResult"))
+        if let containerValues {
+            if containerValues.contains(.messages) {
+                let messagesWrappedContainer = containerValues.nestedContainerNonThrowable(keyedBy: CodingKeys.self, forKey: .messages)
+                if messagesWrappedContainer != nil {
+                    let messagesContainer = try containerValues.decodeIfPresent([SQSClientTypes.Message].self, forKey: .messages)
+                    var messagesBuffer:[SQSClientTypes.Message]? = nil
+                    if let messagesContainer = messagesContainer {
+                        messagesBuffer = [SQSClientTypes.Message]()
+                        for structureContainer0 in messagesContainer {
+                            messagesBuffer?.append(structureContainer0)
+                        }
                     }
+                    messages = messagesBuffer
+                } else {
+                    messages = []
                 }
-                messages = messagesBuffer
             } else {
-                messages = []
+                messages = nil
             }
         } else {
             messages = nil
